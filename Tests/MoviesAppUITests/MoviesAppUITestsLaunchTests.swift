@@ -14,20 +14,23 @@ final class MoviesAppUITestsLaunchTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
+        // Stop immediately when a failure occurs
         continueAfterFailure = false
     }
 
-    @MainActor
     func testLaunch() throws {
         let app = XCUIApplication()
         app.launch()
 
-        // Insert steps here to perform after app launch but before taking a screenshot,
-        // such as logging into a test account or navigating somewhere in the app
+        let header = app.staticTexts["Watch New Movies"]
+        XCTAssertTrue(header.waitForExistence(timeout: 8), "App did not show the main screen after launch")
+    }
 
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "Launch Screen"
-        attachment.lifetime = .keepAlways
-        add(attachment)
+    func testLaunchPerformance() throws {
+        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
+            measure(metrics: [XCTApplicationLaunchMetric()]) {
+                XCUIApplication().launch()
+            }
+        }
     }
 }
